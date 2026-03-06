@@ -968,7 +968,7 @@ Tasks are ordered by dependency. Complete them in sequence within each phase.
 
 ### Phase J — Final Validation
 
-- [ ] Run full test suite: `pytest --cov=execudeck tests/`
+- [x] Run full test suite: `pytest --cov=execudeck tests/`
 - [x] Manual end-to-end test — review mode:
   - [x] Run `execudeck review` on a sample `.pptx`
   - [x] Verify `deck_extraction.json` and `review_prompt.txt` are written
