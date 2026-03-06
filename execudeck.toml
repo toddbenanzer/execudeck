@@ -1,0 +1,5 @@
+[execudeck]
+output_dir = "./output"
+template_path = "./template.pptx"
+prompts_dir = "./prompts"
+log_level = "INFO"

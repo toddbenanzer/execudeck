@@ -1,0 +1,9 @@
+pyproject.toml
+src/execudeck/__init__.py
+src/execudeck/cli.py
+src/execudeck.egg-info/PKG-INFO
+src/execudeck.egg-info/SOURCES.txt
+src/execudeck.egg-info/dependency_links.txt
+src/execudeck.egg-info/entry_points.txt
+src/execudeck.egg-info/requires.txt
+src/execudeck.egg-info/top_level.txt

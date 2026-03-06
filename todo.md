@@ -827,99 +827,99 @@ Tasks are ordered by dependency. Complete them in sequence within each phase.
 
 ### Phase A — Project Scaffolding
 
-- [ ] Create `src/execudeck/` directory structure
-- [ ] Create `src/execudeck/__init__.py` with public API stubs
-- [ ] Create `pyproject.toml` with all metadata, dependencies, and entry points
-- [ ] Create `execudeck.toml` default config at project root
-- [ ] Create `tests/` directory with empty `conftest.py`
-- [ ] Verify `pip install -e ".[dev]"` installs successfully
-- [ ] Verify `execudeck --help` prints CLI usage
+- [x] Create `src/execudeck/` directory structure
+- [x] Create `src/execudeck/__init__.py` with public API stubs
+- [x] Create `pyproject.toml` with all metadata, dependencies, and entry points
+- [x] Create `execudeck.toml` default config at project root
+- [x] Create `tests/` directory with empty `conftest.py`
+- [x] Verify `pip install -e ".[dev]"` installs successfully
+- [x] Verify `execudeck --help` prints CLI usage
 
 ### Phase B — Configuration
 
-- [ ] Implement `config.py`:
-  - [ ] `Config` dataclass with all fields (output_dir, template_path, prompts_dir, log_level)
-  - [ ] `load_config(path)` function using `tomllib` / `tomli`
-  - [ ] Default fallback values
-  - [ ] `ConfigError` exception class
-  - [ ] Validation of template path existence (warn if missing, don't error)
-- [ ] Write `test_config.py` tests; all passing
+- [x] Implement `config.py`:
+  - [x] `Config` dataclass with all fields (output_dir, template_path, prompts_dir, log_level)
+  - [x] `load_config(path)` function using `tomllib` / `tomli`
+  - [x] Default fallback values
+  - [x] `ConfigError` exception class
+  - [x] Validation of template path existence (warn if missing, don't error)
+- [x] Write `test_config.py` tests; all passing
 
 ### Phase C — JSON Schemas (Pydantic Models)
 
-- [ ] Implement `schema/extraction.py`:
-  - [ ] `ExtractedParagraph`, `ExtractedShape`, `ExtractedChart`, `ExtractedSeries`
-  - [ ] `ExtractedTable`, `ExtractedImage`
-  - [ ] `ThemeFonts`, `DeckMetadata`
-  - [ ] `ExtractedSlide`
-  - [ ] `DeckExtraction` root model
-- [ ] Implement `schema/critique.py`:
-  - [ ] `Violation`, `SlideScore`, `ChecklistSection`, `ChecklistResults`
-  - [ ] `CritiqueReport` root model
-- [ ] Implement `schema/deck_structure.py`:
-  - [ ] `ColorPalette`, `DeckBuildMetadata`
-  - [ ] `Bullet`, `SlideBody`
-  - [ ] `AxisSpec`, `SeriesSpec`, `ChartAnnotation`, `ChartSpec`
-  - [ ] `Slide`
-  - [ ] `DeckStructure` root model
-  - [ ] `ContentSlide`, `ContentInput` (for generate mode input)
-- [ ] Implement `schema/__init__.py` re-exports
-- [ ] Write schema test files; all passing
+- [x] Implement `schema/extraction.py`:
+  - [x] `ExtractedParagraph`, `ExtractedShape`, `ExtractedChart`, `ExtractedSeries`
+  - [x] `ExtractedTable`, `ExtractedImage`
+  - [x] `ThemeFonts`, `DeckMetadata`
+  - [x] `ExtractedSlide`
+  - [x] `DeckExtraction` root model
+- [x] Implement `schema/critique.py`:
+  - [x] `Violation`, `SlideScore`, `ChecklistSection`, `ChecklistResults`
+  - [x] `CritiqueReport` root model
+- [x] Implement `schema/deck_structure.py`:
+  - [x] `ColorPalette`, `DeckBuildMetadata`
+  - [x] `Bullet`, `SlideBody`
+  - [x] `AxisSpec`, `SeriesSpec`, `ChartAnnotation`, `ChartSpec`
+  - [x] `Slide`
+  - [x] `DeckStructure` root model
+  - [x] `ContentSlide`, `ContentInput` (for generate mode input)
+- [x] Implement `schema/__init__.py` re-exports
+- [x] Write schema test files; all passing
 
 ### Phase D — Extractor
 
-- [ ] Implement `extractor.py`:
-  - [ ] `extract(pptx_path: str | Path) -> DeckExtraction`
-  - [ ] Slide iteration with shape type detection
-  - [ ] Text frame extraction with paragraph-level formatting
-  - [ ] Chart extraction (type, categories, series, title)
-  - [ ] Table extraction (row/cell text)
-  - [ ] Image detection (name only)
-  - [ ] Footnote heuristic (font size ≤ 12pt AND positioned in bottom 15%)
-  - [ ] Speaker notes extraction
-  - [ ] Deck metadata extraction (core properties, theme fonts/colors)
-- [ ] Write `test_extractor.py` tests; all passing
+- [x] Implement `extractor.py`:
+  - [x] `extract(pptx_path: str | Path) -> DeckExtraction`
+  - [x] Slide iteration with shape type detection
+  - [x] Text frame extraction with paragraph-level formatting
+  - [x] Chart extraction (type, categories, series, title)
+  - [x] Table extraction (row/cell text)
+  - [x] Image detection (name only)
+  - [x] Footnote heuristic (font size ≤ 12pt AND positioned in bottom 15%)
+  - [x] Speaker notes extraction
+  - [x] Deck metadata extraction (core properties, theme fonts/colors)
+- [x] Write `test_extractor.py` tests; all passing
 
 ### Phase E — Prompt Templates
 
-- [ ] Write `src/execudeck/prompts/review.txt`:
-  - [ ] Role assignment block
-  - [ ] `{BEST_PRACTICES}` placeholder
-  - [ ] Task instruction block
-  - [ ] `{DECK_JSON}` placeholder
-  - [ ] Output schema instruction
-  - [ ] `{CRITIQUE_SCHEMA}` placeholder
-  - [ ] JSON-only output reminders
-- [ ] Write `src/execudeck/prompts/generate.txt`:
-  - [ ] Role assignment block
-  - [ ] `{BEST_PRACTICES}` placeholder
-  - [ ] Task instruction block
-  - [ ] `{CONTENT_JSON}` placeholder
-  - [ ] Slide count, action title, color semantics reminders
-  - [ ] `{DECK_STRUCTURE_SCHEMA}` placeholder
-- [ ] Write `src/execudeck/prompts/edit.txt`:
-  - [ ] Role assignment block
-  - [ ] `{BEST_PRACTICES}` placeholder
-  - [ ] Task instruction block
-  - [ ] `{DECK_JSON}` placeholder
-  - [ ] `{CRITIQUE_JSON}` placeholder
-  - [ ] Fix-all-critical-and-major instruction
-  - [ ] `{DECK_STRUCTURE_SCHEMA}` placeholder
-- [ ] Implement prompt-loading utility: `load_prompt(template_name, overrides_dir=None) -> str`
-- [ ] Implement prompt-filling utility: `fill_prompt(template: str, **kwargs) -> str`
+- [x] Write `src/execudeck/prompts/review.txt`:
+  - [x] Role assignment block
+  - [x] `{BEST_PRACTICES}` placeholder
+  - [x] Task instruction block
+  - [x] `{DECK_JSON}` placeholder
+  - [x] Output schema instruction
+  - [x] `{CRITIQUE_SCHEMA}` placeholder
+  - [x] JSON-only output reminders
+- [x] Write `src/execudeck/prompts/generate.txt`:
+  - [x] Role assignment block
+  - [x] `{BEST_PRACTICES}` placeholder
+  - [x] Task instruction block
+  - [x] `{CONTENT_JSON}` placeholder
+  - [x] Slide count, action title, color semantics reminders
+  - [x] `{DECK_STRUCTURE_SCHEMA}` placeholder
+- [x] Write `src/execudeck/prompts/edit.txt`:
+  - [x] Role assignment block
+  - [x] `{BEST_PRACTICES}` placeholder
+  - [x] Task instruction block
+  - [x] `{DECK_JSON}` placeholder
+  - [x] `{CRITIQUE_JSON}` placeholder
+  - [x] Fix-all-critical-and-major instruction
+  - [x] `{DECK_STRUCTURE_SCHEMA}` placeholder
+- [x] Implement prompt-loading utility: `load_prompt(template_name, overrides_dir=None) -> str`
+- [x] Implement prompt-filling utility: `fill_prompt(template: str, **kwargs) -> str`
 
 ### Phase F — Phase 1 Orchestrators
 
-- [ ] Implement `reviewer.py`:
-  - [ ] `review(pptx_path, output_dir, config) -> Path` (returns prompt path)
-  - [ ] Calls extractor, fills prompt, writes files, prints instructions
-- [ ] Implement `generator.py`:
-  - [ ] `generate(content_json_path, output_dir, config) -> Path`
-  - [ ] Validates ContentInput, fills prompt, writes file, prints instructions
-- [ ] Implement `editor.py`:
-  - [ ] `edit(pptx_path, critique_json_path, output_dir, config) -> Path`
-  - [ ] Calls extractor, validates CritiqueReport, fills prompt, writes files
-- [ ] Write `test_reviewer.py`, `test_generator.py`, `test_editor.py`; all passing
+- [x] Implement `reviewer.py`:
+  - [x] `review(pptx_path, output_dir, config) -> Path` (returns prompt path)
+  - [x] Calls extractor, fills prompt, writes files, prints instructions
+- [x] Implement `generator.py`:
+  - [x] `generate(content_json_path, output_dir, config) -> Path`
+  - [x] Validates ContentInput, fills prompt, writes file, prints instructions
+- [x] Implement `editor.py`:
+  - [x] `edit(pptx_path, critique_json_path, output_dir, config) -> Path`
+  - [x] Calls extractor, validates CritiqueReport, fills prompt, writes files
+- [x] Write `test_reviewer.py`, `test_generator.py`, `test_editor.py`; all passing
 
 ### Phase G — Builder
 
@@ -962,9 +962,9 @@ Tasks are ordered by dependency. Complete them in sequence within each phase.
 
 ### Phase I — Public API & `__init__.py`
 
-- [ ] Expose `extract`, `review`, `generate`, `edit`, `build` functions
-- [ ] Expose schema models: `DeckExtraction`, `CritiqueReport`, `DeckStructure`, `ContentInput`
-- [ ] Add `__version__ = "0.1.0"`
+- [x] Expose `extract`, `review`, `generate`, `edit`, `build` functions
+- [x] Expose schema models: `DeckExtraction`, `CritiqueReport`, `DeckStructure`, `ContentInput`
+- [x] Add `__version__ = "0.1.0"`
 
 ### Phase J — Final Validation
 
