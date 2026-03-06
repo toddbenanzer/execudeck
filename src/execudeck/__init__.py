@@ -8,11 +8,8 @@ from .extractor import extract
 from .reviewer import review
 from .generator import generate
 from .editor import edit
+from .builder import build
 from .schema import DeckExtraction, CritiqueReport, DeckStructure, ContentInput
-
-# Public API stub for phase 2
-def build(*args, **kwargs):
-    pass
 
 __all__ = [
     "extract",

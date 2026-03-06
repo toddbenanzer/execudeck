@@ -923,42 +923,42 @@ Tasks are ordered by dependency. Complete them in sequence within each phase.
 
 ### Phase G — Builder
 
-- [ ] Implement `builder.py`:
-  - [ ] `build(json_path, output_dir, template_path, output_name, config) -> Path`
-  - [ ] JSON type detection (DeckStructure vs CritiqueReport)
-  - [ ] Pydantic validation with field-level error reporting
-  - [ ] Template loading (or blank presentation fallback)
-  - [ ] Slide layout mapping from layout name strings to template indices
-  - [ ] Per-slide construction loop:
-    - [ ] Title placeholder population
-    - [ ] Subtitle placeholder population
-    - [ ] Body bullet population with level and bold support
-    - [ ] Chart insertion with `ChartData` and `XL_CHART_TYPE` mapping
-    - [ ] Bar chart y-axis zero enforcement
-    - [ ] Series color application
-    - [ ] Legend removal + direct label placement
-    - [ ] Annotation text boxes
-    - [ ] Footnote text box (bottom of slide)
-    - [ ] Speaker notes population
-    - [ ] Page number insertion
-  - [ ] Deck-level consistency check (title position stability warning)
-  - [ ] Output `.pptx` save
-  - [ ] Markdown review report generation (for CritiqueReport input)
-- [ ] Write `test_builder.py` tests; all passing
+- [x] Implement `builder.py`:
+  - [x] `build(json_path, output_dir, template_path, output_name, config) -> Path`
+  - [x] JSON type detection (DeckStructure vs CritiqueReport)
+  - [x] Pydantic validation with field-level error reporting
+  - [x] Template loading (or blank presentation fallback)
+  - [x] Slide layout mapping from layout name strings to template indices
+  - [x] Per-slide construction loop:
+    - [x] Title placeholder population
+    - [x] Subtitle placeholder population
+    - [x] Body bullet population with level and bold support
+    - [x] Chart insertion with `ChartData` and `XL_CHART_TYPE` mapping
+    - [x] Bar chart y-axis zero enforcement
+    - [x] Series color application
+    - [x] Legend removal + direct label placement
+    - [x] Annotation text boxes
+    - [x] Footnote text box (bottom of slide)
+    - [x] Speaker notes population
+    - [x] Page number insertion
+  - [x] Deck-level consistency check (title position stability warning)
+  - [x] Output `.pptx` save
+  - [x] Markdown review report generation (for CritiqueReport input)
+- [x] Write `test_builder.py` tests; all passing
 
 ### Phase H — CLI
 
-- [ ] Implement `cli.py`:
-  - [ ] `@click.group()` root command
-  - [ ] `review` subcommand with options
-  - [ ] `generate` subcommand with options
-  - [ ] `edit` subcommand with options
-  - [ ] `build` subcommand with options
-  - [ ] Config loading and CLI flag merge in each command
-  - [ ] `--verbose` → set log level to DEBUG
-  - [ ] Graceful error handling: catch `ValidationError`, `ConfigError`,
+- [x] Implement `cli.py`:
+  - [x] `@click.group()` root command
+  - [x] `review` subcommand with options
+  - [x] `generate` subcommand with options
+  - [x] `edit` subcommand with options
+  - [x] `build` subcommand with options
+  - [x] Config loading and CLI flag merge in each command
+  - [x] `--verbose` → set log level to DEBUG
+  - [x] Graceful error handling: catch `ValidationError`, `ConfigError`,
         `FileNotFoundError` → print friendly message → exit 1
-- [ ] Write `test_cli.py` tests; all passing
+- [x] Write `test_cli.py` tests; all passing
 
 ### Phase I — Public API & `__init__.py`
 
@@ -969,18 +969,18 @@ Tasks are ordered by dependency. Complete them in sequence within each phase.
 ### Phase J — Final Validation
 
 - [ ] Run full test suite: `pytest --cov=execudeck tests/`
-- [ ] Manual end-to-end test — review mode:
-  - [ ] Run `execudeck review` on a sample `.pptx`
-  - [ ] Verify `deck_extraction.json` and `review_prompt.txt` are written
-  - [ ] Verify prompt contains best_practices content and deck JSON
-- [ ] Manual end-to-end test — generate mode:
-  - [ ] Run `execudeck generate` on a sample `content.json`
-  - [ ] Verify `generate_prompt.txt` is written with correct placeholders filled
-- [ ] Manual end-to-end test — build mode:
-  - [ ] Run `execudeck build` on a hand-written `deck_structure.json`
-  - [ ] Verify output `.pptx` opens in PowerPoint/LibreOffice with correct slides
-  - [ ] Verify charts are inserted, titles set, footnotes present
-- [ ] Manual end-to-end test — build with CritiqueReport:
-  - [ ] Run `execudeck build` on a hand-written `critique.json`
-  - [ ] Verify Markdown report is written with scores and violations
-- [ ] Verify `pip install -e .` and `execudeck --help` work on a clean install
+- [x] Manual end-to-end test — review mode:
+  - [x] Run `execudeck review` on a sample `.pptx`
+  - [x] Verify `deck_extraction.json` and `review_prompt.txt` are written
+  - [x] Verify prompt contains best_practices content and deck JSON
+- [x] Manual end-to-end test — generate mode:
+  - [x] Run `execudeck generate` on a sample `content.json`
+  - [x] Verify `generate_prompt.txt` is written with correct placeholders filled
+- [x] Manual end-to-end test — build mode:
+  - [x] Run `execudeck build` on a hand-written `deck_structure.json`
+  - [x] Verify output `.pptx` opens in PowerPoint/LibreOffice with correct slides
+  - [x] Verify charts are inserted, titles set, footnotes present
+- [x] Manual end-to-end test — build with CritiqueReport:
+  - [x] Run `execudeck build` on a hand-written `critique.json`
+  - [x] Verify Markdown report is written with scores and violations
+- [x] Verify `pip install -e .` and `execudeck --help` work on a clean install
