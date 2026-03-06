@@ -1,5 +1,6 @@
 pyproject.toml
 src/execudeck/__init__.py
+src/execudeck/builder.py
 src/execudeck/cli.py
 src/execudeck/config.py
 src/execudeck/editor.py
@@ -17,6 +18,8 @@ src/execudeck/schema/__init__.py
 src/execudeck/schema/critique.py
 src/execudeck/schema/deck_structure.py
 src/execudeck/schema/extraction.py
+tests/test_builder.py
+tests/test_cli.py
 tests/test_config.py
 tests/test_editor.py
 tests/test_extractor.py
