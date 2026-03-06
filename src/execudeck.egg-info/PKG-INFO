@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: execudeck
+Version: 0.1.0
+Summary: Review, generate, and edit executive PowerPoint presentations
+Requires-Python: >=3.12
+Requires-Dist: python-pptx>=0.6.23
+Requires-Dist: click>=8.1
+Requires-Dist: pydantic>=2.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"

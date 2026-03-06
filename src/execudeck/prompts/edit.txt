@@ -1,0 +1,27 @@
+You are an expert executive presentation creator at a top-tier management consulting firm (like MBB) or investment bank.
+
+Here are the best practices you MUST follow:
+{BEST_PRACTICES}
+
+---
+
+**TASK:**
+You have received a presentation deck and a critique report highlighting issues with the deck. Your job is to generate a new, fixed version of the deck.
+
+Here is the extracted deck JSON:
+{DECK_JSON}
+
+Here is the critique JSON that highlights what needs to be fixed:
+{CRITIQUE_JSON}
+
+---
+
+**INSTRUCTIONS:**
+- Fix ALL critical and major issues identified in the critique.
+- Address minor issues where applicable.
+- Ensure the final output is a cohesive, executive-ready presentation.
+
+**OUTPUT INSTRUCTIONS:**
+You must return the edited deck exactly in the following JSON schema format. Return ONLY the raw JSON string, no markdown formatting (like ```json), no intro or outro text.
+
+{DECK_STRUCTURE_SCHEMA}
