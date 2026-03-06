@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from execudeck.config import Config
 from execudeck.extractor import extract
-from execudeck.prompt_utils import load_prompt, fill_prompt
+from execudeck.prompt_utils import load_prompt, fill_prompt, load_best_practices, print_next_steps
 from execudeck.schema import CritiqueReport
 
 logger = logging.getLogger(__name__)
@@ -29,13 +29,7 @@ def review(pptx_path: str | Path, output_dir: str | Path, config: Config) -> Pat
     # 4. Load prompt template and best practices
     template = load_prompt("review", overrides_dir=config.prompts_dir)
 
-    # Try to load best practices
-    best_practices_path = Path("best_practices.md")
-    best_practices = ""
-    if best_practices_path.exists():
-        best_practices = best_practices_path.read_text()
-    else:
-        logger.warning(f"best_practices.md not found. Proceeding without it.")
+    best_practices = load_best_practices()
 
     critique_schema = CritiqueReport.model_json_schema()
 
@@ -53,10 +47,6 @@ def review(pptx_path: str | Path, output_dir: str | Path, config: Config) -> Pat
     logger.info(f"Review prompt saved: {prompt_path}")
 
     # 7. Print instructions
-    print(f"\nNEXT STEPS:")
-    print(f"1. Open {prompt_path}")
-    print(f"2. Copy the full contents and paste into your LLM (Copilot, Gemini, etc.)")
-    print(f"3. Save the LLM's JSON response to a file, e.g. {output_dir}/critique.json")
-    print(f"4. Run: execudeck build {output_dir}/critique.json\n")
+    print_next_steps(prompt_path, output_dir, "critique.json")
 
     return prompt_path
