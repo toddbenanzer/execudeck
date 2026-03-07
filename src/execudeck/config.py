@@ -37,9 +37,9 @@ def load_config(path: str | Path | None = None) -> Config:
             log_level=exec_data.get("log_level", Config.log_level),
         )
 
-        # Validate template_path existence, warn but do not error (as per requirement)
+        # Validate template_path existence, error if not found
         if not Path(config.template_path).exists():
-             logger.warning(f"Template path does not exist: {config.template_path}")
+             raise ConfigError(f"Template path does not exist: {config.template_path}")
 
         return config
     except tomllib.TOMLDecodeError as e:
