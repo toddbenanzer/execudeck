@@ -37,3 +37,19 @@ def print_next_steps(prompt_path: str | Path, output_dir: str | Path, expected_j
     print(f"2. Copy the full contents and paste into your LLM (Copilot, Gemini, etc.)")
     print(f"3. Save the LLM's JSON response to a file, e.g. {output_dir}/{expected_json}")
     print(f"4. Run: execudeck build {output_dir}/{expected_json}\n")
+
+def finalize_prompt(prompt: str, output_dir: str | Path, prompt_filename: str, expected_json: str) -> Path:
+    """Save the prompt to disk and print the next steps."""
+    import logging
+    logger = logging.getLogger(__name__)
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    prompt_path = output_dir / prompt_filename
+    prompt_path.write_text(prompt)
+    logger.info(f"Prompt saved: {prompt_path}")
+
+    print_next_steps(prompt_path, output_dir, expected_json)
+
+    return prompt_path

@@ -1,3 +1,9 @@
+"""
+Critique Schema Definitions.
+
+Provides Pydantic models for the Critique Report, including slide scores,
+rule violations, and checklist validations.
+"""
 from pydantic import BaseModel, Field
 from typing import List, Literal, Optional
 

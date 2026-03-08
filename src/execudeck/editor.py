@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from execudeck.config import Config
 from execudeck.extractor import extract
-from execudeck.prompt_utils import load_prompt, fill_prompt, load_best_practices, print_next_steps
+from execudeck.prompt_utils import load_prompt, fill_prompt, load_best_practices, finalize_prompt
 from execudeck.schema import CritiqueReport, DeckStructure
 
 logger = logging.getLogger(__name__)
@@ -51,12 +51,5 @@ def edit(pptx_path: str | Path, critique_json_path: str | Path, output_dir: str 
         DECK_STRUCTURE_SCHEMA=json.dumps(deck_structure_schema, indent=2)
     )
 
-    # 7. Save prompt
-    prompt_path = output_dir / "edit_prompt.txt"
-    prompt_path.write_text(prompt)
-    logger.info(f"Edit prompt saved: {prompt_path}")
-
-    # 8. Print instructions
-    print_next_steps(prompt_path, output_dir, "deck_structure.json")
-
-    return prompt_path
+    # 7. Save prompt and print instructions
+    return finalize_prompt(prompt, output_dir, "edit_prompt.txt", "deck_structure.json")

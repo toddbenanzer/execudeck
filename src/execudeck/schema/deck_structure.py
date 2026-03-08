@@ -1,3 +1,10 @@
+"""
+Deck Structure Schema Definitions.
+
+Provides Pydantic models mapping to the final Deck Build schema, which
+structurally defines metadata, slide layouts, and component specs like
+charts, text bodies, colors, and content slides.
+"""
 from pydantic import BaseModel, Field
 from typing import List, Literal, Optional, Dict, Any
 
