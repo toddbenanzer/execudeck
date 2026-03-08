@@ -1,5 +1,15 @@
+"""
+Deck Extractor Module.
+
+Responsible for parsing a PowerPoint (.pptx) file to extract logical structure,
+metadata, shapes, charts, and content into standard Pydantic schema representations.
+Exposes the main `extract` function.
+"""
 import os
+import logging
 from pathlib import Path
+from typing import List, Optional, Any, Tuple
+
 from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.util import Pt
@@ -8,7 +18,9 @@ from execudeck.schema import (
     ExtractedParagraph, ExtractedChart, ExtractedSeries, ExtractedTable, ExtractedImage
 )
 
-def _is_footnote(shape, slide_height):
+logger = logging.getLogger(__name__)
+
+def _is_footnote(shape: Any, slide_height: Any) -> bool:
     """
     Footnote heuristic: font size <= 12pt AND positioned in bottom 15% of the slide.
     """
@@ -30,8 +42,104 @@ def _is_footnote(shape, slide_height):
                 if run.font.size and run.font.size > Pt(12):
                     return False
         return True
-    except Exception:
+    except (AttributeError, TypeError) as e:
+        logger.warning(f"Error checking footnote heuristic: {e}")
         return False
+
+def _extract_shape_type(shape: Any) -> str:
+    try:
+        return shape.shape_type.name if hasattr(shape, 'shape_type') else "UNKNOWN"
+    except AttributeError as e:
+        logger.warning(f"Error identifying shape type: {e}")
+        return "UNKNOWN"
+
+def _extract_text_box(shape: Any, shape_type_name: str) -> Optional[ExtractedShape]:
+    paragraphs = []
+    for p in shape.text_frame.paragraphs:
+        if not p.text.strip():
+            continue
+
+        is_bold = False
+        is_italic = False
+        if p.runs:
+            font = p.runs[0].font
+            is_bold = font.bold if font.bold is not None else False
+            is_italic = font.italic if font.italic is not None else False
+
+        paragraphs.append(ExtractedParagraph(
+            text=p.text.strip(),
+            level=p.level,
+            bold=is_bold,
+            italic=is_italic
+        ))
+
+    if paragraphs:
+        return ExtractedShape(
+            shape_name=shape.name,
+            shape_type=shape_type_name,
+            paragraphs=paragraphs
+        )
+    return None
+
+def _extract_table(shape: Any) -> ExtractedTable:
+    rows = []
+    for row in shape.table.rows:
+        rows.append([cell.text_frame.text for cell in row.cells])
+    return ExtractedTable(
+        shape_name=shape.name,
+        rows=rows
+    )
+
+def _extract_chart(shape: Any) -> ExtractedChart:
+    chart = shape.chart
+    chart_type_str = str(chart.chart_type).replace("XL_CHART_TYPE.", "")
+    chart_title = chart.chart_title.text_frame.text if chart.has_title else None
+
+    categories = []
+    series_data = []
+
+    try:
+        categories = [str(c.label) for c in chart.plots[0].categories]
+        for s in chart.series:
+            values = [v for v in s.values]
+            series_data.append(ExtractedSeries(name=s.name, values=values))
+    except (AttributeError, IndexError, KeyError, TypeError) as e:
+        logger.warning(f"Error extracting chart data: {e}")
+        pass
+
+    return ExtractedChart(
+        shape_name=shape.name,
+        chart_type=chart_type_str,
+        title=chart_title,
+        categories=categories,
+        series=series_data
+    )
+
+def _extract_image(shape: Any) -> ExtractedImage:
+    return ExtractedImage(
+        shape_name=shape.name,
+        image_name=shape.name
+    )
+
+def _extract_slide_titles(slide: Any, placeholders: List[Any]) -> Tuple[Optional[str], Optional[str]]:
+    title_text = slide.shapes.title.text if slide.shapes.title else None
+    subtitle_text = None
+
+    if len(placeholders) > 1:
+        try:
+             subtitle_text = placeholders[1].text if placeholders[1] != slide.shapes.title else None
+        except (AttributeError, IndexError) as e:
+             logger.warning(f"Error extracting subtitle: {e}")
+             pass
+
+    return title_text, subtitle_text
+
+def _extract_speaker_notes(slide: Any) -> Optional[str]:
+    if slide.has_notes_slide and slide.notes_slide.notes_text_frame:
+         notes_text = slide.notes_slide.notes_text_frame.text
+         if notes_text.strip():
+             return notes_text
+    return None
 
 def extract(pptx_path: str | Path) -> DeckExtraction:
     """Extract full content and metadata from a PowerPoint presentation."""
@@ -55,19 +163,8 @@ def extract(pptx_path: str | Path) -> DeckExtraction:
     for idx, slide in enumerate(prs.slides, start=1):
         layout_name = slide.slide_layout.name if slide.slide_layout else "Blank"
 
-        title_text = None
-        subtitle_text = None
-
-        if slide.shapes.title:
-            title_text = slide.shapes.title.text
-
-        # Very simple subtitle heuristic (often the second placeholder)
         placeholders = [s for s in slide.shapes if s.is_placeholder]
-        if len(placeholders) > 1:
-            try:
-                 subtitle_text = placeholders[1].text if placeholders[1] != slide.shapes.title else None
-            except Exception:
-                 pass
+        title_text, subtitle_text = _extract_slide_titles(slide, placeholders)
 
         body_shapes = []
         charts = []
@@ -76,96 +173,22 @@ def extract(pptx_path: str | Path) -> DeckExtraction:
         footnotes = []
 
         for shape in slide.shapes:
-            # Check for footnote first
             if _is_footnote(shape, slide_height):
                 footnotes.append(shape.text)
                 continue
 
-            shape_type_name = "UNKNOWN"
-            try:
-                shape_type_name = shape.shape_type.name if hasattr(shape, 'shape_type') else "UNKNOWN"
-            except Exception:
-                pass
+            shape_type_name = _extract_shape_type(shape)
 
-            # Text Box / Placeholders
             if shape.has_text_frame and shape != slide.shapes.title and not (len(placeholders) > 1 and shape == placeholders[1]):
-                paragraphs = []
-                for p in shape.text_frame.paragraphs:
-                    if not p.text.strip():
-                        continue
-
-                    # Calculate simple formatting based on the first run
-                    is_bold = False
-                    is_italic = False
-                    if p.runs:
-                        is_bold = bool(p.runs[0].font.bold)
-                        is_italic = bool(p.runs[0].font.italic)
-
-                    paragraphs.append(ExtractedParagraph(
-                        text=p.text,
-                        level=p.level,
-                        bold=is_bold,
-                        italic=is_italic
-                    ))
-
-                if paragraphs:
-                    body_shapes.append(ExtractedShape(
-                        shape_name=shape.name,
-                        shape_type=shape_type_name,
-                        paragraphs=paragraphs
-                    ))
-
-            # Tables
+                text_box = _extract_text_box(shape, shape_type_name)
+                if text_box:
+                    body_shapes.append(text_box)
             elif shape.has_table:
-                rows = []
-                for row in shape.table.rows:
-                    rows.append([cell.text_frame.text for cell in row.cells])
-                tables.append(ExtractedTable(
-                    shape_name=shape.name,
-                    rows=rows
-                ))
-
-            # Charts
+                tables.append(_extract_table(shape))
             elif shape.has_chart:
-                chart = shape.chart
-                # python-pptx chart type name
-                chart_type_str = str(chart.chart_type).replace("XL_CHART_TYPE.", "")
-
-                chart_title = chart.chart_title.text_frame.text if chart.has_title else None
-
-                # Try to extract categories and series data
-                categories = []
-                series_data = []
-
-                try:
-                    categories = [str(c.label) for c in chart.plots[0].categories]
-                    for s in chart.series:
-                        values = [v for v in s.values]
-                        series_data.append(ExtractedSeries(name=s.name, values=values))
-                except Exception:
-                    # In case of missing plots or unsupported chart types
-                    pass
-
-                charts.append(ExtractedChart(
-                    shape_name=shape.name,
-                    chart_type=chart_type_str,
-                    title=chart_title,
-                    categories=categories,
-                    series=series_data
-                ))
-
-            # Images/Pictures
-            elif shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
-                images.append(ExtractedImage(
-                    shape_name=shape.name,
-                    image_name=shape.name
-                ))
-
-        speaker_notes = None
-        if slide.has_notes_slide and slide.notes_slide.notes_text_frame:
-             notes_text = slide.notes_slide.notes_text_frame.text
-             if notes_text.strip():
-                 speaker_notes = notes_text
+                charts.append(_extract_chart(shape))
+            elif hasattr(shape, 'shape_type') and shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
+                images.append(_extract_image(shape))
 
         slides_data.append(ExtractedSlide(
             slide_number=idx,
@@ -177,7 +200,7 @@ def extract(pptx_path: str | Path) -> DeckExtraction:
             tables=tables,
             images=images,
             footnotes=footnotes,
-            speaker_notes=speaker_notes
+            speaker_notes=_extract_speaker_notes(slide)
         ))
 
     return DeckExtraction(metadata=metadata, slides=slides_data)

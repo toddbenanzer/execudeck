@@ -1,3 +1,9 @@
+"""
+Extraction Schema Definitions.
+
+Provides Pydantic models mapping to the extracted components of a PowerPoint
+deck (e.g., ExtractedShape, ExtractedChart, DeckMetadata, ThemeFonts).
+"""
 from pydantic import BaseModel
 from typing import List, Optional
 

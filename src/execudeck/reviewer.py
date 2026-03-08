@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from execudeck.config import Config
 from execudeck.extractor import extract
-from execudeck.prompt_utils import load_prompt, fill_prompt, load_best_practices, print_next_steps
+from execudeck.prompt_utils import load_prompt, fill_prompt, load_best_practices, finalize_prompt
 from execudeck.schema import CritiqueReport
 
 logger = logging.getLogger(__name__)
@@ -41,12 +41,5 @@ def review(pptx_path: str | Path, output_dir: str | Path, config: Config) -> Pat
         CRITIQUE_SCHEMA=json.dumps(critique_schema, indent=2)
     )
 
-    # 6. Save prompt
-    prompt_path = output_dir / "review_prompt.txt"
-    prompt_path.write_text(prompt)
-    logger.info(f"Review prompt saved: {prompt_path}")
-
-    # 7. Print instructions
-    print_next_steps(prompt_path, output_dir, "critique.json")
-
-    return prompt_path
+    # 6. Save prompt and print instructions
+    return finalize_prompt(prompt, output_dir, "review_prompt.txt", "critique.json")

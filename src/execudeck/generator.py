@@ -2,7 +2,7 @@ import json
 import logging
 from pathlib import Path
 from execudeck.config import Config
-from execudeck.prompt_utils import load_prompt, fill_prompt, load_best_practices, print_next_steps
+from execudeck.prompt_utils import load_prompt, fill_prompt, load_best_practices, finalize_prompt
 from execudeck.schema import ContentInput, DeckStructure
 
 logger = logging.getLogger(__name__)
@@ -38,12 +38,5 @@ def generate(content_json_path: str | Path, output_dir: str | Path, config: Conf
         DECK_STRUCTURE_SCHEMA=json.dumps(deck_structure_schema, indent=2)
     )
 
-    # 5. Save prompt
-    prompt_path = output_dir / "generate_prompt.txt"
-    prompt_path.write_text(prompt)
-    logger.info(f"Generate prompt saved: {prompt_path}")
-
-    # 6. Print instructions
-    print_next_steps(prompt_path, output_dir, "deck_structure.json")
-
-    return prompt_path
+    # 5. Save prompt and print instructions
+    return finalize_prompt(prompt, output_dir, "generate_prompt.txt", "deck_structure.json")
